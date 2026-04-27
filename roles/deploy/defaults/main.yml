@@ -8,6 +8,7 @@ netbox_deploy_netbox_docker_repo: "https://github.com/netbox-community/netbox-do
 netbox_deploy_netbox_docker_version: HEAD
 netbox_deploy_netbox_docker_dir: "~/netbox-docker"
 
+netbox_deploy_host: "{{ ansible_host | default('localhost') }}"
 netbox_deploy_port: 8000
 
 netbox_deploy_admin_user: admin

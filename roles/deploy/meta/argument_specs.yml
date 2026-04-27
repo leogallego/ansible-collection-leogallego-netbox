@@ -24,6 +24,15 @@ argument_specs:
           - absent
         description: >-
           Whether NetBox should be deployed or torn down.
+      netbox_deploy_host:
+        type: str
+        required: false
+        default: "{{ ansible_host | default('localhost') }}"
+        description: >-
+          Address used in the exported netbox_deploy_url fact.
+          Defaults to ansible_host so remote deployments produce
+          a reachable URL. Override when the host is behind NAT
+          or uses a DNS name.
       netbox_deploy_port:
         type: int
         required: false

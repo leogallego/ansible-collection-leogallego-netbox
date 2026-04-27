@@ -1,5 +1,6 @@
 ---
 __netbox_deploy_api_url: "http://localhost:{{ netbox_deploy_port }}/api"
 __netbox_deploy_healthcheck_url: "http://localhost:{{ netbox_deploy_port }}/login/"
+__netbox_deploy_external_url: "http://{{ netbox_deploy_host }}:{{ netbox_deploy_port }}"
 __netbox_deploy_healthcheck_retries: 30
 __netbox_deploy_healthcheck_delay: 10

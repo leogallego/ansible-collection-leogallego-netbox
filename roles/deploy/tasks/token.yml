@@ -31,11 +31,11 @@
 
 - name: Token | Export connection facts
   ansible.builtin.set_fact:
-    netbox_deploy_url: "http://localhost:{{ netbox_deploy_port }}"
+    netbox_deploy_url: "{{ __netbox_deploy_external_url }}"
     netbox_deploy_api_token: "{{ __netbox_deploy_token_value }}"
   no_log: true
 
 - name: Token | Show NetBox version
   ansible.builtin.debug:
-    msg: "NetBox {{ __netbox_deploy_api_check.json['netbox-version'] }} ready at http://localhost:{{ netbox_deploy_port }}"
+    msg: "NetBox {{ __netbox_deploy_api_check.json['netbox-version'] }} ready at {{ __netbox_deploy_external_url }}"
     verbosity: 1

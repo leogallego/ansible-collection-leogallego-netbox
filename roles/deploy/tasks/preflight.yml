@@ -1,0 +1,53 @@
+---
+- name: Preflight | Use explicit provider when set
+  when: netbox_deploy_provider is defined
+  block:
+    - name: Preflight | Validate provider binary exists
+      ansible.builtin.command:
+        cmd: "{{ netbox_deploy_provider }} --version"
+      changed_when: false
+      register: __netbox_deploy_provider_check
+      failed_when:
+        - __netbox_deploy_provider_check.rc != 0
+
+    - name: Preflight | Set compose command from explicit provider
+      ansible.builtin.set_fact:
+        __netbox_deploy_compose_cmd: "{{ netbox_deploy_provider }}"
+
+- name: Preflight | Auto-detect container engine
+  when: netbox_deploy_provider is not defined
+  block:
+    - name: Preflight | Check for podman
+      ansible.builtin.command:
+        cmd: podman --version
+      changed_when: false
+      failed_when: false
+      register: __netbox_deploy_podman_check
+
+    - name: Preflight | Check for docker
+      ansible.builtin.command:
+        cmd: docker --version
+      changed_when: false
+      failed_when: false
+      register: __netbox_deploy_docker_check
+      when: __netbox_deploy_podman_check.rc != 0
+
+    - name: Preflight | Fail if no container engine found
+      ansible.builtin.fail:
+        msg: >-
+          No container engine found. Install podman or docker
+          and ensure it is on the PATH, or set netbox_deploy_provider
+          explicitly.
+      when:
+        - __netbox_deploy_podman_check.rc != 0
+        - __netbox_deploy_docker_check.rc | default(1) != 0
+
+    - name: Preflight | Set compose command from auto-detection
+      ansible.builtin.set_fact:
+        __netbox_deploy_compose_cmd: >-
+          {{ 'podman' if __netbox_deploy_podman_check.rc == 0 else 'docker' }}
+
+- name: Preflight | Show detected engine
+  ansible.builtin.debug:
+    msg: "Using container engine: {{ __netbox_deploy_compose_cmd }}"
+    verbosity: 1

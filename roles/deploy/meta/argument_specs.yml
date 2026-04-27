@@ -1,0 +1,86 @@
+---
+argument_specs:
+  main:
+    short_description: Deploy NetBox locally via compose
+    description:
+      - Deploys a NetBox instance using podman compose or docker compose.
+      - Creates a superuser and provisions an API token.
+      - Exports netbox_deploy_url and netbox_deploy_api_token facts.
+    options:
+      netbox_deploy_provider:
+        type: str
+        required: false
+        choices:
+          - podman
+          - docker
+        description: >-
+          Container engine. Auto-detected if not set (podman > docker).
+      netbox_deploy_state:
+        type: str
+        required: false
+        default: present
+        choices:
+          - present
+          - absent
+        description: >-
+          Whether NetBox should be deployed or torn down.
+      netbox_deploy_port:
+        type: int
+        required: false
+        default: 8000
+        description: >-
+          Host port to expose NetBox on.
+      netbox_deploy_admin_user:
+        type: str
+        required: false
+        default: admin
+        description: >-
+          Superuser username.
+      netbox_deploy_admin_password:
+        type: str
+        required: false
+        default: admin
+        description: >-
+          Superuser password.
+      netbox_deploy_admin_email:
+        type: str
+        required: false
+        default: "admin@example.com"
+        description: >-
+          Superuser email address.
+      netbox_deploy_token:
+        type: str
+        required: false
+        default: ""
+        description: >-
+          API token value. Leave empty to auto-generate.
+      netbox_deploy_netbox_docker_repo:
+        type: str
+        required: false
+        default: "https://github.com/netbox-community/netbox-docker.git"
+        description: >-
+          Git URL for the netbox-docker repository.
+      netbox_deploy_netbox_docker_version:
+        type: str
+        required: false
+        default: HEAD
+        description: >-
+          Git ref (branch, tag, commit) to clone.
+      netbox_deploy_netbox_docker_dir:
+        type: path
+        required: false
+        default: "~/netbox-docker"
+        description: >-
+          Local directory to clone netbox-docker into.
+      netbox_deploy_cleanup_dir:
+        type: bool
+        required: false
+        default: false
+        description: >-
+          Remove cloned netbox-docker directory on teardown.
+      netbox_deploy_validate_certs:
+        type: bool
+        required: false
+        default: false
+        description: >-
+          Validate TLS certificates on API calls.

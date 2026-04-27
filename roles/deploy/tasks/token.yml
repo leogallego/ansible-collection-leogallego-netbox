@@ -1,0 +1,41 @@
+---
+- name: Token | Provision API token via REST
+  ansible.builtin.uri:
+    url: "{{ __netbox_deploy_api_url }}/users/tokens/provision/"
+    method: POST
+    body_format: json
+    body:
+      username: "{{ netbox_deploy_admin_user }}"
+      password: "{{ netbox_deploy_admin_password }}"
+      version: 1
+    status_code:
+      - 200
+      - 201
+    validate_certs: "{{ netbox_deploy_validate_certs }}"
+  register: __netbox_deploy_token_result
+  no_log: true
+
+- name: Token | Store provisioned token
+  ansible.builtin.set_fact:
+    __netbox_deploy_token_value: "{{ netbox_deploy_token if netbox_deploy_token | default('') | length > 0 else __netbox_deploy_token_result.json.token }}"
+  no_log: true
+
+- name: Token | Verify API token works
+  ansible.builtin.uri:
+    url: "{{ __netbox_deploy_api_url }}/status/"
+    headers:
+      Authorization: "Token {{ __netbox_deploy_token_value }}"
+    status_code: 200
+    validate_certs: "{{ netbox_deploy_validate_certs }}"
+  register: __netbox_deploy_api_check
+
+- name: Token | Export connection facts
+  ansible.builtin.set_fact:
+    netbox_deploy_url: "http://localhost:{{ netbox_deploy_port }}"
+    netbox_deploy_api_token: "{{ __netbox_deploy_token_value }}"
+  no_log: true
+
+- name: Token | Show NetBox version
+  ansible.builtin.debug:
+    msg: "NetBox {{ __netbox_deploy_api_check.json['netbox-version'] }} ready at http://localhost:{{ netbox_deploy_port }}"
+    verbosity: 1

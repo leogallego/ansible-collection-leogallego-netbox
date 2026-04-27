@@ -1,0 +1,22 @@
+---
+- name: Deploy | Clone netbox-docker repository
+  ansible.builtin.git:
+    repo: "{{ netbox_deploy_netbox_docker_repo }}"
+    dest: "{{ netbox_deploy_netbox_docker_dir }}"
+    version: "{{ netbox_deploy_netbox_docker_version }}"
+    depth: 1
+    update: false
+
+- name: Deploy | Create docker-compose.override.yml
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/docker-compose.override.yml.j2"
+    dest: "{{ netbox_deploy_netbox_docker_dir }}/docker-compose.override.yml"
+    mode: "0644"
+
+- name: Deploy | Start NetBox stack
+  ansible.builtin.command:
+    cmd: "{{ __netbox_deploy_compose_cmd }} compose up -d"
+    chdir: "{{ netbox_deploy_netbox_docker_dir }}"
+  register: __netbox_deploy_compose_up
+  changed_when: "'Creating' in __netbox_deploy_compose_up.stderr or 'Started' in __netbox_deploy_compose_up.stderr"
+  check_mode: false

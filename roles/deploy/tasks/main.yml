@@ -1,0 +1,28 @@
+---
+- name: Teardown NetBox
+  when: netbox_deploy_state == "absent"
+  ansible.builtin.include_tasks:
+    file: "{{ role_path }}/tasks/teardown/compose.yml"
+
+- name: Deploy and configure NetBox
+  when: netbox_deploy_state == "present"
+  block:
+    - name: Run preflight checks
+      ansible.builtin.include_tasks:
+        file: "{{ role_path }}/tasks/preflight.yml"
+
+    - name: Deploy NetBox via compose
+      ansible.builtin.include_tasks:
+        file: "{{ role_path }}/tasks/deploy/compose.yml"
+
+    - name: Wait for NetBox to be ready
+      ansible.builtin.include_tasks:
+        file: "{{ role_path }}/tasks/healthcheck.yml"
+
+    - name: Create superuser account
+      ansible.builtin.include_tasks:
+        file: "{{ role_path }}/tasks/superuser.yml"
+
+    - name: Provision API token
+      ansible.builtin.include_tasks:
+        file: "{{ role_path }}/tasks/token.yml"

@@ -1,0 +1,22 @@
+---
+- name: Teardown | Detect container engine for teardown
+  ansible.builtin.include_tasks:
+    file: "{{ role_path }}/tasks/preflight.yml"
+
+- name: Teardown | Stop and remove containers and volumes
+  ansible.builtin.command:
+    cmd: "{{ __netbox_deploy_compose_cmd }} compose down -v"
+    chdir: "{{ netbox_deploy_netbox_docker_dir }}"
+  register: __netbox_deploy_teardown
+  changed_when: true
+  failed_when:
+    - __netbox_deploy_teardown.rc != 0
+    - "'no such file or directory' not in (__netbox_deploy_teardown.stderr | lower)"
+    - "'no container' not in (__netbox_deploy_teardown.stderr | lower)"
+  check_mode: false
+
+- name: Teardown | Remove netbox-docker directory
+  ansible.builtin.file:
+    path: "{{ netbox_deploy_netbox_docker_dir }}"
+    state: absent
+  when: netbox_deploy_cleanup_dir

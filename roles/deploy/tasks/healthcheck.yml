@@ -1,0 +1,11 @@
+---
+- name: Healthcheck | Wait for NetBox to be ready
+  ansible.builtin.uri:
+    url: "{{ __netbox_deploy_healthcheck_url }}"
+    method: GET
+    status_code: 200
+    validate_certs: "{{ netbox_deploy_validate_certs }}"
+  register: __netbox_deploy_health
+  until: __netbox_deploy_health.status == 200
+  retries: "{{ __netbox_deploy_healthcheck_retries }}"
+  delay: "{{ __netbox_deploy_healthcheck_delay }}"

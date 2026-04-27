@@ -1,0 +1,38 @@
+---
+namespace: leogallego
+name: netbox
+version: 1.0.0
+readme: README.md
+authors:
+  - Leonardo Andres Gallego <993814+leogallego@users.noreply.github.com>
+
+description: Ansible collection for deploying and managing NetBox
+license_file: LICENSE
+
+tags:
+  - networking
+  - infrastructure
+  - linux
+  - tools
+  - netbox
+  - containers
+  - podman
+  - docker
+
+dependencies: {}
+
+repository: https://github.com/leogallego/ansible-collection-leogallego-netbox
+
+build_ignore:
+  - .gitignore
+  - changelogs/.plugin-cache.yaml
+  - .devcontainer
+  - .github
+  - .vscode
+  - .pre-commit-config.yaml
+  - .isort.cfg
+  - .prettierignore
+  - devfile.yaml
+  - tox-ansible.ini
+  - test-requirements.txt
+  - pyproject.toml

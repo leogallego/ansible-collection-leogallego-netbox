@@ -1,0 +1,20 @@
+---
+# netbox_deploy_provider: podman
+# netbox_deploy_provider: docker
+
+netbox_deploy_state: present
+
+netbox_deploy_netbox_docker_repo: "https://github.com/netbox-community/netbox-docker.git"
+netbox_deploy_netbox_docker_version: HEAD
+netbox_deploy_netbox_docker_dir: "~/netbox-docker"
+
+netbox_deploy_port: 8000
+
+netbox_deploy_admin_user: admin
+netbox_deploy_admin_password: admin
+netbox_deploy_admin_email: admin@example.com
+
+# netbox_deploy_token:
+
+netbox_deploy_cleanup_dir: false
+netbox_deploy_validate_certs: false

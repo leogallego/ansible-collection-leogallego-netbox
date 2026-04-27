@@ -1,0 +1,5 @@
+---
+# Role variables use collection-scoped prefix (netbox_deploy_) rather than
+# bare role name prefix (deploy_) to avoid clashes across collections.
+skip_list:
+  - var-naming[no-role-prefix]

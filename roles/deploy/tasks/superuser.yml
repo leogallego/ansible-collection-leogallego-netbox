@@ -1,0 +1,18 @@
+---
+- name: Superuser | Create admin account
+  ansible.builtin.command:
+    cmd: >-
+      {{ __netbox_deploy_compose_cmd }} compose exec
+      -e DJANGO_SUPERUSER_PASSWORD={{ netbox_deploy_admin_password }}
+      netbox /opt/netbox/netbox/manage.py createsuperuser
+      --no-input
+      --username {{ netbox_deploy_admin_user }}
+      --email {{ netbox_deploy_admin_email }}
+    chdir: "{{ netbox_deploy_netbox_docker_dir }}"
+  register: __netbox_deploy_create_user
+  changed_when: "'Superuser created' in __netbox_deploy_create_user.stdout"
+  failed_when:
+    - __netbox_deploy_create_user.rc != 0
+    - "'already taken' not in __netbox_deploy_create_user.stderr"
+  check_mode: false
+  no_log: true

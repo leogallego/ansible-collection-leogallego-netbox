@@ -17,5 +17,7 @@ netbox_deploy_admin_email: admin@example.com
 
 # netbox_deploy_token:
 
+netbox_deploy_token_version: 2
+
 netbox_deploy_cleanup_dir: false
 netbox_deploy_validate_certs: false

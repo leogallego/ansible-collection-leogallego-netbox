@@ -103,14 +103,16 @@ None.
       netbox_deploy_cleanup_dir: true
 ```
 
-## Idempotency
+## Idempotency and Check Mode
 
-This role is idempotent. Running it twice with the same parameters produces no changes on the second run:
+This role is **idempotent** (True). Running it twice with the same parameters produces no changes on the second run:
 
 - Git clone skips if the directory already exists
 - Compose up recreates only changed containers
 - Superuser creation detects "already taken" and reports ok
 - Token provisioning reuses existing tokens
+
+**Check mode:** Not supported on first run. The role uses `command` tasks for compose operations and superuser creation that cannot run in dry-run mode. Check mode works correctly after an initial deployment (skipped tasks report no changes).
 
 ## Rollback
 

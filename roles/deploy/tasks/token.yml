@@ -7,7 +7,7 @@
     body:
       username: "{{ netbox_deploy_admin_user }}"
       password: "{{ netbox_deploy_admin_password }}"
-      version: 1
+      version: "{{ netbox_deploy_token_version }}"
     status_code:
       - 200
       - 201

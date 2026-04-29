@@ -63,6 +63,17 @@ argument_specs:
         default: ""
         description: >-
           API token value. Leave empty to auto-generate.
+      netbox_deploy_token_version:
+        type: int
+        required: false
+        default: 2
+        choices:
+          - 1
+          - 2
+        description: >-
+          API token version to provision. Use 2 for NetBox 4.5+
+          (nbt_ prefix, improved security). Use 1 for NetBox < 4.5.
+          v1 tokens are deprecated and will be removed in NetBox 4.7.
       netbox_deploy_netbox_docker_repo:
         type: str
         required: false

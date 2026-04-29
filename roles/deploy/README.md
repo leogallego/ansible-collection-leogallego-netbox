@@ -24,6 +24,7 @@ Deploy a local NetBox instance using podman compose or docker compose. Creates a
 | `netbox_deploy_admin_password` | `admin` | Superuser password. |
 | `netbox_deploy_admin_email` | `admin@example.com` | Superuser email. |
 | `netbox_deploy_token` | *(empty)* | API token value. Leave empty to auto-generate. |
+| `netbox_deploy_token_version` | `2` | API token version: `2` for NetBox 4.5+ (`nbt_` prefix), `1` for legacy. v1 deprecated in 4.7. |
 | `netbox_deploy_cleanup_dir` | `false` | Remove cloned netbox-docker directory on teardown. |
 | `netbox_deploy_validate_certs` | `false` | Validate TLS certs on API calls. |
 

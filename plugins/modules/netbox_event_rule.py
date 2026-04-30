@@ -213,6 +213,25 @@ ACTION_TYPE_TO_CONTENT_TYPE = {
 }
 
 
+def validate_action_object(module, data, state):
+    """Validate action_object_name / action_object_id mutual exclusion and presence."""
+    if state == "absent":
+        return
+
+    has_name = data.get("action_object_name") is not None
+    has_id = data.get("action_object_id") is not None
+
+    if has_name and has_id:
+        module.fail_json(
+            msg="action_object_name and action_object_id are mutually exclusive. Provide only one."
+        )
+
+    if not has_name and not has_id:
+        module.fail_json(
+            msg="One of action_object_name or action_object_id is required when state=present."
+        )
+
+
 def main():
     """Main entry point for module execution."""
     argument_spec = deepcopy(NETBOX_ARG_SPEC)
@@ -257,6 +276,11 @@ def main():
         required_if=required_if,
         mutually_exclusive=mutually_exclusive,
     )
+
+    data = module.params["data"]
+    state = module.params["state"]
+
+    validate_action_object(module, data, state)
 
     netbox_event_rule = NetboxExtrasModule(module, NB_EVENT_RULES)
     netbox_event_rule.run()

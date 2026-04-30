@@ -80,8 +80,7 @@ class TestArgumentSpec:
         assert netbox_event_rule.ACTION_TYPE_TO_CONTENT_TYPE["webhook"] == "extras.webhook"
         assert netbox_event_rule.ACTION_TYPE_TO_CONTENT_TYPE["script"] == "extras.script"
         assert (
-            netbox_event_rule.ACTION_TYPE_TO_CONTENT_TYPE["notification"]
-            == "extras.notification"
+            netbox_event_rule.ACTION_TYPE_TO_CONTENT_TYPE["notification"] == "extras.notification"
         )
 
     def test_endpoint_registration(self):

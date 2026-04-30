@@ -232,6 +232,37 @@ def validate_action_object(module, data, state):
         )
 
 
+def resolve_action_object(module, nb, data):
+    """Resolve action_object_name to action_object_type + action_object_id via pynetbox.
+
+    When action_object_id is provided directly, just set action_object_type.
+    When neither is present (state=absent), this is a no-op.
+    """
+    action_type = data.get("action_type")
+    has_name = data.get("action_object_name") is not None
+    has_id = data.get("action_object_id") is not None
+
+    if not has_name and not has_id:
+        return
+
+    if has_name:
+        endpoint_name = ACTION_TYPE_TO_ENDPOINT[action_type]
+        nb_app = getattr(nb, "extras")
+        nb_endpoint = getattr(nb_app, endpoint_name)
+        action_object = nb_endpoint.get(name=data["action_object_name"])
+
+        if not action_object:
+            module.fail_json(
+                msg="Could not find %s with name '%s'." % (action_type, data["action_object_name"])
+            )
+            return
+
+        data["action_object_id"] = action_object.id
+        del data["action_object_name"]
+
+    data["action_object_type"] = ACTION_TYPE_TO_CONTENT_TYPE[action_type]
+
+
 def main():
     """Main entry point for module execution."""
     argument_spec = deepcopy(NETBOX_ARG_SPEC)
@@ -283,6 +314,9 @@ def main():
     validate_action_object(module, data, state)
 
     netbox_event_rule = NetboxExtrasModule(module, NB_EVENT_RULES)
+
+    resolve_action_object(module, netbox_event_rule.nb, data)
+
     netbox_event_rule.run()
 
 

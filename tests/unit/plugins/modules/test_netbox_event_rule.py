@@ -96,3 +96,80 @@ class TestArgumentSpec:
 
         assert "event_rules" in API_APPS_ENDPOINTS["extras"]
         assert ENDPOINT_NAME_MAPPING["event_rules"] == "event_rule"
+
+
+class TestActionObjectValidation:
+    """Tests for action_object_name / action_object_id validation logic."""
+
+    def test_validate_action_object_both_provided_fails(self):
+        """Providing both action_object_name and action_object_id should fail."""
+        from ansible_collections.leogallego.netbox.plugins.modules.netbox_event_rule import (
+            validate_action_object,
+        )
+
+        data = {
+            "name": "test rule",
+            "action_type": "webhook",
+            "action_object_name": "My Webhook",
+            "action_object_id": 1,
+        }
+        module = MagicMock()
+        result = validate_action_object(module, data, "present")
+        module.fail_json.assert_called_once()
+        assert "mutually exclusive" in module.fail_json.call_args[1]["msg"].lower()
+
+    def test_validate_action_object_neither_provided_on_create_fails(self):
+        """Creating without action_object_name or action_object_id should fail."""
+        from ansible_collections.leogallego.netbox.plugins.modules.netbox_event_rule import (
+            validate_action_object,
+        )
+
+        data = {
+            "name": "test rule",
+            "action_type": "webhook",
+        }
+        module = MagicMock()
+        validate_action_object(module, data, "present")
+        module.fail_json.assert_called_once()
+        assert "action_object_name" in module.fail_json.call_args[1]["msg"]
+
+    def test_validate_action_object_absent_does_not_require_action_fields(self):
+        """State=absent should not require action_object_name or action_object_id."""
+        from ansible_collections.leogallego.netbox.plugins.modules.netbox_event_rule import (
+            validate_action_object,
+        )
+
+        data = {"name": "test rule"}
+        module = MagicMock()
+        validate_action_object(module, data, "absent")
+        module.fail_json.assert_not_called()
+
+    def test_validate_action_object_id_only_passes(self):
+        """Providing only action_object_id should pass validation."""
+        from ansible_collections.leogallego.netbox.plugins.modules.netbox_event_rule import (
+            validate_action_object,
+        )
+
+        data = {
+            "name": "test rule",
+            "action_type": "webhook",
+            "action_object_id": 42,
+        }
+        module = MagicMock()
+        validate_action_object(module, data, "present")
+        module.fail_json.assert_not_called()
+
+    def test_validate_action_object_name_only_passes(self):
+        """Providing only action_object_name should pass validation."""
+        from ansible_collections.leogallego.netbox.plugins.modules.netbox_event_rule import (
+            validate_action_object,
+        )
+
+        data = {
+            "name": "test rule",
+            "action_type": "webhook",
+            "action_object_name": "My Webhook",
+        }
+        module = MagicMock()
+        validate_action_object(module, data, "present")
+        module.fail_json.assert_not_called()

@@ -225,6 +225,7 @@ def validate_action_object(module, data, state):
         module.fail_json(
             msg="action_object_name and action_object_id are mutually exclusive. Provide only one."
         )
+        return
 
     if not has_name and not has_id:
         module.fail_json(
@@ -249,7 +250,15 @@ def resolve_action_object(module, nb, data):
         endpoint_name = ACTION_TYPE_TO_ENDPOINT[action_type]
         nb_app = getattr(nb, "extras")
         nb_endpoint = getattr(nb_app, endpoint_name)
-        action_object = nb_endpoint.get(name=data["action_object_name"])
+
+        try:
+            action_object = nb_endpoint.get(name=data["action_object_name"])
+        except Exception as e:
+            module.fail_json(
+                msg="Error querying NetBox for %s '%s': %s"
+                % (action_type, data["action_object_name"], e)
+            )
+            return
 
         if not action_object:
             module.fail_json(

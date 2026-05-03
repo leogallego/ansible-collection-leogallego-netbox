@@ -1,7 +1,7 @@
 ---
 namespace: leogallego
 name: netbox
-version: 1.0.0
+version: 1.1.0
 readme: README.md
 authors:
   - Leonardo Andres Gallego <993814+leogallego@users.noreply.github.com>

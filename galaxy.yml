@@ -19,7 +19,8 @@ tags:
   - podman
   - docker
 
-dependencies: {}
+dependencies:
+  netbox.netbox: ">=3.22.0"
 
 repository: https://github.com/leogallego/ansible-collection-leogallego-netbox
 

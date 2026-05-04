@@ -197,9 +197,6 @@ from copy import deepcopy
 
 NB_EVENT_RULES = "event_rules"
 
-API_APPS_ENDPOINTS["extras"]["event_rules"] = {}
-ENDPOINT_NAME_MAPPING["event_rules"] = "event_rule"
-
 ACTION_TYPE_TO_ENDPOINT = {
     "webhook": "webhooks",
     "script": "scripts",
@@ -274,6 +271,11 @@ def resolve_action_object(module, nb, data):
 
 def main():
     """Main entry point for module execution."""
+    # TODO(#3): Remove block when event_rules is registered upstream in netbox.netbox
+    API_APPS_ENDPOINTS["extras"]["event_rules"] = {}
+    ENDPOINT_NAME_MAPPING["event_rules"] = "event_rule"
+    # END TODO(#3)
+
     argument_spec = deepcopy(NETBOX_ARG_SPEC)
     argument_spec.update(
         dict(

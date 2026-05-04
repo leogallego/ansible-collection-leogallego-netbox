@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - galaxy.yml - Shorten author string to comply with galaxy-importer 64-char limit.
+  - netbox_event_rule - Move endpoint registration into main() to fix ansible-doc sanity test.

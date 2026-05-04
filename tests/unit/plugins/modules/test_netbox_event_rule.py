@@ -84,14 +84,33 @@ class TestArgumentSpec:
         )
 
     def test_endpoint_registration(self):
-        """Importing the module should patch API_APPS_ENDPOINTS and ENDPOINT_NAME_MAPPING."""
-        from ansible_collections.leogallego.netbox.plugins.modules import (
-            netbox_event_rule,  # noqa: F401 — import triggers side effect
-        )
+        """Calling main() should patch API_APPS_ENDPOINTS and ENDPOINT_NAME_MAPPING."""
         from ansible_collections.netbox.netbox.plugins.module_utils.netbox_utils import (
             API_APPS_ENDPOINTS,
             ENDPOINT_NAME_MAPPING,
         )
+
+        API_APPS_ENDPOINTS["extras"].pop("event_rules", None)
+        ENDPOINT_NAME_MAPPING.pop("event_rules", None)
+
+        from ansible_collections.leogallego.netbox.plugins.modules.netbox_event_rule import (
+            main,
+        )
+
+        with patch(
+            "ansible_collections.leogallego.netbox.plugins.modules.netbox_event_rule.NetboxAnsibleModule"
+        ) as mock_mod_cls, patch(
+            "ansible_collections.leogallego.netbox.plugins.modules.netbox_event_rule.NetboxExtrasModule"
+        ) as mock_extras_cls:
+            mock_instance = MagicMock()
+            mock_instance.params = {
+                "data": {"name": "test", "action_type": "webhook", "action_object_id": 1},
+                "state": "present",
+            }
+            mock_instance.check_mode = False
+            mock_mod_cls.return_value = mock_instance
+            mock_extras_cls.return_value = MagicMock()
+            main()
 
         assert "event_rules" in API_APPS_ENDPOINTS["extras"]
         assert ENDPOINT_NAME_MAPPING["event_rules"] == "event_rule"
